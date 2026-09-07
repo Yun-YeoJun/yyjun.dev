@@ -1,0 +1,46 @@
+---
+import { getRelativeLocaleUrl } from "astro:i18n";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Main from "@/components/Main.astro";
+import { getSeries } from "@/utils/getSeries";
+import config from "@/config";
+
+const series = await getSeries();
+---
+
+<Layout
+  title={`시리즈 | ${config.site.title}`}
+  description="하나의 주제를 차근차근 이어가는 연재 글입니다."
+>
+  <Header />
+  <Main pageTitle="시리즈" pageDesc="하나의 주제를 차근차근, 처음부터 끝까지.">
+    {
+      series.length === 0 ? (
+        <p class="text-muted-foreground my-8">아직 공개된 시리즈가 없습니다.</p>
+      ) : (
+        <ul class="my-8 space-y-6">
+          {series.map(({ definition, posts }) => (
+            <li class="rounded-lg border p-5">
+              <a
+                href={getRelativeLocaleUrl(
+                  config.site.lang,
+                  `series/${definition.id}`
+                )}
+                class="text-accent text-xl font-semibold hover:underline"
+              >
+                <h2>{definition.data.title}</h2>
+              </a>
+              <p class="mt-2">{definition.data.description}</p>
+              <p class="text-muted-foreground mt-3 text-sm">
+                공개된 글 {posts.length}편
+              </p>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </Main>
+  <Footer />
+</Layout>

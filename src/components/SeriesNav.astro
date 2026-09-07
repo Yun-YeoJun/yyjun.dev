@@ -1,0 +1,83 @@
+---
+import { getRelativeLocaleUrl } from "astro:i18n";
+import { getSeries } from "@/utils/getSeries";
+import { getPostUrl } from "@/utils/getPostPaths";
+import config from "@/config";
+
+interface Props {
+  postId: string;
+  seriesId: string;
+  position?: "toc" | "adjacent";
+}
+const { postId, seriesId, position = "toc" } = Astro.props;
+const group = (await getSeries()).find(item => item.definition.id === seriesId);
+const index = group?.posts.findIndex(post => post.id === postId) ?? -1;
+const previous = group && index > 0 ? group.posts[index - 1] : undefined;
+const next = group && index >= 0 ? group.posts[index + 1] : undefined;
+---
+
+{
+  group && position === "toc" && (
+    <nav
+      aria-label="시리즈 목차"
+      class="bg-muted/30 my-8 rounded-lg border p-5"
+      data-pagefind-ignore
+    >
+      <a
+        class="text-accent font-semibold hover:underline"
+        href={getRelativeLocaleUrl(config.site.lang, `series/${seriesId}`)}
+      >
+        {group.definition.data.title}
+      </a>
+      <ol class="mt-4 space-y-2">
+        {group.posts.map(post => (
+          <li value={post.data.seriesOrder}>
+            <a
+              href={getPostUrl(post.id, post.filePath)}
+              aria-current={post.id === postId ? "page" : undefined}
+              class:list={[
+                "hover:underline",
+                { "text-accent font-semibold": post.id === postId },
+              ]}
+            >
+              {post.data.seriesOrder}회. {post.data.title}
+              {post.id === postId && <span class="ml-2 text-xs">현재 글</span>}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}
+{
+  group && position === "adjacent" && (
+    <nav
+      aria-label="시리즈 회차 이동"
+      class="my-8 grid gap-4 sm:grid-cols-2"
+      data-pagefind-ignore
+    >
+      {previous ? (
+        <a
+          class="hover:border-accent rounded-lg border p-4"
+          href={getPostUrl(previous.id, previous.filePath)}
+          rel="prev"
+        >
+          <span class="text-muted-foreground block text-sm">← 이전 회차</span>
+          <span class="text-accent">{previous.data.title}</span>
+        </a>
+      ) : (
+        <span />
+      )}
+      {next && (
+        <a
+          class="hover:border-accent rounded-lg border p-4 text-right"
+          href={getPostUrl(next.id, next.filePath)}
+          rel="next"
+        >
+          <span class="text-muted-foreground block text-sm">다음 회차 →</span>
+          <span class="text-accent">{next.data.title}</span>
+        </a>
+      )}
+    </nav>
+  )
+}
