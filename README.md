@@ -1,4 +1,4 @@
-# 개발 노트
+# yyjun.dev
 
 AstroPaper 기반 기술 블로그입니다. 옵시디언에서 표준 Markdown으로 작성하고 GitHub의 `main` 브랜치에 푸시하면 GitHub Actions가 검사·빌드한 뒤 GitHub Pages에 배포합니다.
 
@@ -86,7 +86,7 @@ seriesOrder: 1
 
 ## 블로그 이름과 프로필
 
-`astro-paper.config.ts`에서 `site.title`, `site.description`, `site.author`를 바꿉니다. 현재 이름은 **개발 노트**, 작성자는 **블로그 작성자**입니다. GitHub 등 외부 링크는 `socials`에 넣고 자기소개는 `src/content/pages/about.md`에서 편집하세요.
+`astro-paper.config.ts`에서 `site.title`, `site.description`, `site.author`를 바꿉니다. 현재 이름은 **yyjun.dev**, 작성자는 **블로그 작성자**입니다. GitHub 등 외부 링크는 `socials`에 넣고 자기소개는 `src/content/pages/about.md`에서 편집하세요.
 
 한국어 UI, 서울 시간대, 다크 모드, 코드 강조·복사, RSS, 사이트맵, 검색을 제공합니다. OG 공유 이미지는 저장소에 포함된 나눔고딕 폰트로 빌드하므로 한글을 표시하며 외부 폰트 서버를 호출하지 않습니다. Pagefind는 한국어 검색을 지원하지만 조사·어미를 분석하는 형태소 검색은 제공하지 않습니다.
 
