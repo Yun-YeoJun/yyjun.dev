@@ -11,6 +11,7 @@ export default {
     search: "검색",
   },
   post: {
+    tableOfContents: "목차",
     publishedAt: "작성일",
     updatedAt: "수정일",
     sharePostIntro: "글 공유하기:",

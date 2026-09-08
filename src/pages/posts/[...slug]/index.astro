@@ -16,6 +16,7 @@ import BackToTopButton from "./_components/BackToTopButton.astro";
 import AdjacentPostNav from "./_components/AdjacentPostNav.astro";
 import config from "@/config";
 import SeriesNav from "@/components/SeriesNav.astro";
+import TableOfContents from "@/components/TableOfContents.astro";
 
 export async function getStaticPaths() {
   const posts = await getCollection("posts");
@@ -74,7 +75,7 @@ const {
   hideEditPost,
 } = post.data;
 
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
 
 let ogImageUrl: string | undefined;
 
@@ -141,16 +142,19 @@ const ogImage = ogImageUrl
       )
     }
 
-    <article
-      id="article"
-      class:list={[
-        "mt-8 w-full",
-        "app-prose max-w-app",
-        "prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)",
-      ]}
-    >
-      <Content />
-    </article>
+    <div class="relative">
+      <TableOfContents {headings} />
+      <article
+        id="article"
+        class:list={[
+          "mt-8 w-full",
+          "app-prose max-w-app",
+          "prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)",
+        ]}
+      >
+        <Content />
+      </article>
+    </div>
 
     <hr class="my-8 border-dashed" />
 
@@ -216,7 +220,7 @@ const ogImage = ogImageUrl
 
   function addHeadingLinks() {
     const headings = Array.from(
-      document.querySelectorAll("h2, h3, h4, h5, h6")
+      document.querySelectorAll("#article :is(h1, h2, h3, h4, h5, h6)")
     );
     for (const heading of headings) {
       heading.classList.add("group");

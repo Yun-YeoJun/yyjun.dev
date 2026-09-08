@@ -1,0 +1,137 @@
+---
+import type { MarkdownHeading } from "astro";
+import config from "@/config";
+import { useTranslations } from "@/i18n";
+
+type Props = { headings: MarkdownHeading[] };
+const headings = Astro.props.headings.filter(
+  ({ depth }) => depth >= 1 && depth <= 6
+);
+const minimumDepth = Math.min(...headings.map(({ depth }) => depth));
+const t = useTranslations(Astro.currentLocale ?? config.site.lang);
+---
+
+{
+  headings.length > 0 && (
+    <aside class="toc-container" data-pagefind-ignore>
+      <table-of-contents>
+        <div class="toc-panel">
+          <nav aria-label={t.post.tableOfContents}>
+            <ul class="border-border space-y-1 border-s">
+              {headings.map(({ slug, text, depth }) => (
+                <li>
+                  <a
+                    href={`#${encodeURIComponent(slug)}`}
+                    data-heading-id={slug}
+                    class="toc-link text-muted-foreground hover:text-accent block border-s-2 border-transparent py-1 text-sm"
+                    style={{
+                      paddingInlineStart: `${0.75 + (depth - minimumDepth) * 0.75}rem`,
+                    }}
+                  >
+                    {text}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+      </table-of-contents>
+    </aside>
+  )
+}
+
+<style>
+  .toc-container {
+    margin-top: 2rem;
+  }
+  .toc-panel {
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    padding: 1rem;
+  }
+  .toc-link {
+    overflow-wrap: anywhere;
+  }
+  .toc-link[aria-current="location"] {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+    font-weight: 600;
+  }
+  @media (min-width: 80rem) {
+    .toc-container {
+      position: absolute;
+      top: 0;
+      left: 100%;
+      width: 15rem;
+      height: 100%;
+      margin-top: 0;
+      padding-left: 1.5rem;
+    }
+    table-of-contents {
+      display: block;
+      position: sticky;
+      top: 2rem;
+    }
+    .toc-panel {
+      max-height: calc(100dvh - 4rem);
+      overflow-y: auto;
+      border: 0;
+      border-radius: 0;
+      padding: 0.25rem;
+    }
+  }
+  @media print {
+    .toc-container {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  class TableOfContents extends HTMLElement {
+    private cleanup?: () => void;
+
+    connectedCallback() {
+      const entries = Array.from(
+        this.querySelectorAll<HTMLAnchorElement>("[data-heading-id]")
+      )
+        .map(link => ({
+          link,
+          heading: document.getElementById(link.dataset.headingId!),
+        }))
+        .filter(entry => entry.heading !== null);
+      let frame = 0;
+      const update = () => {
+        frame = 0;
+        let current = entries[0];
+        for (const entry of entries) {
+          if (entry.heading!.getBoundingClientRect().top > 100) break;
+          current = entry;
+        }
+        for (const entry of entries) {
+          if (entry === current)
+            entry.link.setAttribute("aria-current", "location");
+          else entry.link.removeAttribute("aria-current");
+        }
+      };
+      const scheduleUpdate = () => {
+        if (!frame) frame = requestAnimationFrame(update);
+      };
+      window.addEventListener("scroll", scheduleUpdate, { passive: true });
+      window.addEventListener("resize", scheduleUpdate);
+      scheduleUpdate();
+      this.cleanup = () => {
+        window.removeEventListener("scroll", scheduleUpdate);
+        window.removeEventListener("resize", scheduleUpdate);
+        cancelAnimationFrame(frame);
+      };
+    }
+
+    disconnectedCallback() {
+      this.cleanup?.();
+    }
+  }
+  if (!customElements.get("table-of-contents")) {
+    customElements.define("table-of-contents", TableOfContents);
+  }
+</script>
