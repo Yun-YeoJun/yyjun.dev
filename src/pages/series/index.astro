@@ -2,6 +2,7 @@
 import { getRelativeLocaleUrl } from "astro:i18n";
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
+import Breadcrumb from "@/components/Breadcrumb.astro";
 import Footer from "@/components/Footer.astro";
 import Main from "@/components/Main.astro";
 import { getSeries } from "@/utils/getSeries";
@@ -15,6 +16,9 @@ const series = await getSeries();
   description="하나의 주제를 차근차근 이어가는 연재 글입니다."
 >
   <Header />
+
+  <Breadcrumb />
+
   <Main pageTitle="시리즈" pageDesc="하나의 주제를 차근차근, 처음부터 끝까지.">
     {
       series.length === 0 ? (
