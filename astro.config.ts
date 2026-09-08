@@ -12,6 +12,8 @@ import { transformerFileName } from "./src/utils/transformers/fileName";
 import config from "./astro-paper.config";
 import remarkContentLinks from "./src/utils/remarkContentLinks";
 
+import remarkHeadingLevels from "./src/utils/remarkHeadingLevels";
+
 const base = process.env.BASE_PATH || "/";
 
 export default defineConfig({
@@ -36,6 +38,7 @@ export default defineConfig({
       remarkPlugins: [
         [remarkContentLinks, { base }],
         [remarkToc, { heading: "목차|Table of contents" }],
+        remarkHeadingLevels,
       ],
     }),
     shikiConfig: {
