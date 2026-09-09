@@ -1,10 +1,19 @@
 import { test, type TestContext } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from "node:fs";
+import {
+  existsSync,
+  globSync,
+  mkdtempSync,
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+  rmSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { unified } from "unified";
 import remarkParse from "remark-parse";
+import { visit } from "unist-util-visit";
 import type { Root, Link, Paragraph } from "mdast";
 import remarkContentLinks from "../src/utils/remarkContentLinks.ts";
 
@@ -76,4 +85,26 @@ test("allows unpublished source posts to link unfinished episodes", async t => {
   writeFileSync(join(root, "posts/first.md"), "---\ndraft: true\n---\n");
   writeFileSync(join(root, "posts/hidden.md"), "---\ndraft: true\n---\n");
   await transform(root, "[작성 중](hidden.md)");
+});
+
+test("every local Markdown image resolves to a source file", () => {
+  const postsRoot = resolve("src/content/posts");
+
+  for (const relativeFile of globSync("**/*.md", { cwd: postsRoot })) {
+    const file = resolve(postsRoot, relativeFile);
+    const tree = unified().use(remarkParse).parse(readFileSync(file, "utf8"));
+
+    visit(tree, "image", image => {
+      if (/^(?:[a-z]+:|\/)/i.test(image.url)) return;
+
+      const target = resolve(
+        dirname(file),
+        decodeURIComponent(image.url.split(/[?#]/, 1)[0])
+      );
+      assert.ok(
+        existsSync(target),
+        `${relativeFile}: image target does not exist: ${image.url}`
+      );
+    });
+  }
 });
