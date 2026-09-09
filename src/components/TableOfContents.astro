@@ -44,6 +44,11 @@ const t = useTranslations(Astro.currentLocale ?? config.site.lang);
   .toc-container {
     margin-top: 2rem;
   }
+  @media (max-width: 79.999rem) {
+    .toc-container {
+      display: none;
+    }
+  }
   .toc-panel {
     border: 1px solid var(--color-border);
     border-radius: 0.5rem;
