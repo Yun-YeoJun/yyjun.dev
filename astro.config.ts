@@ -13,6 +13,7 @@ import config from "./astro-paper.config";
 import remarkContentLinks from "./src/utils/remarkContentLinks";
 
 import remarkHeadingLevels from "./src/utils/remarkHeadingLevels";
+import rehypeResponsiveTables from "./src/utils/rehypeResponsiveTables";
 
 const base = process.env.BASE_PATH || "/";
 
@@ -40,6 +41,7 @@ export default defineConfig({
         [remarkToc, { heading: "목차|Table of contents" }],
         remarkHeadingLevels,
       ],
+      rehypePlugins: [rehypeResponsiveTables],
     }),
     shikiConfig: {
       themes: { light: "min-light", dark: "night-owl" },
