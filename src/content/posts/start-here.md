@@ -1,8 +1,8 @@
 ---
-title: "개발 노트를 시작하며"
-description: "배운 것과 해결한 문제를 오래 남기는 개발 기록을 시작합니다."
+title: 개발 노트를 시작하며
+description: 배운 것과 해결한 문제를 오래 남기는 개발 기록을 시작합니다.
 pubDatetime: 2026-01-01T09:00:00+09:00
-featured: true
+featured: false
 draft: false
 tags:
   - 기록
