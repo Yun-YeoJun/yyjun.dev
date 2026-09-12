@@ -1,33 +1,54 @@
-# build output
+# Astro build output and generated types
 dist/
-
-# generated types
 .astro/
+
+# Pagefind search index
+public/pagefind/
 
 # dependencies
 node_modules/
+.npm-cache/
+.pnpm-store/
+
+# Test coverage and TypeScript incremental cache
+coverage/
+*.tsbuildinfo
 
 # logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+lerna-debug.log*
 
 # environment variables
 .env
-.env.production
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+!.env.*.example
+!.env.*.sample
+!.env.*.template
 
-# macOS-specific files
+# Operating system files
 .DS_Store
+Thumbs.db
+Desktop.ini
 
 # jetbrains setting folder
 .idea/
 
-# pagefind
-public/pagefind
+# Local VS Code state (shared project configuration remains tracked)
+.vscode/*.local.json
+*.code-workspace
 
-# pnpm
-.pnpm-store
+# Local agent runtime data
+/.omx/
+
+# Root Obsidian vault settings (the writing vault lives in src/content)
+/.obsidian/
+/.trash/
 
 # docker compose
 compose.override.yaml
